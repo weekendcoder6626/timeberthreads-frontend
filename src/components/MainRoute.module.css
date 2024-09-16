@@ -1,0 +1,12 @@
+.container {
+    height: calc(100vh - rem(60px));
+    width: 100vw;
+    /* background-color: green; */
+}
+
+.header {
+    @mixin dark {
+        background-color: var(--mantine-color-darkModeBG-1);
+    }
+    transition: background-color 500ms;
+}

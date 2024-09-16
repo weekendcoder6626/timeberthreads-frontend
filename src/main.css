@@ -1,0 +1,7 @@
+body {
+    background-color: white;
+    @mixin dark {
+        background-color: var(--mantine-color-darkModeBG-0);
+    }
+    transition: background-color 500ms;
+}

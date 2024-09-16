@@ -1,0 +1,21 @@
+.authPlant {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* left: 50%; */
+    width: 100%;
+    height: 100%;
+    /* scale: 0.6; */
+    object-fit: cover;
+}
+
+.heading {
+    font-family: "Poppins";
+    font-weight: 500;
+}
+
+.input {
+    /* color: red; */
+    font-family: "Poppins";
+    /* font-weight: 500; */
+}
