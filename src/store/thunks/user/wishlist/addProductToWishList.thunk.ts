@@ -9,8 +9,6 @@ export const addProductToWishListThunk = createAThunk(
 
         const response = await addProductToWishlistAPI(input.product.productId, thunkApi.signal);
 
-        console.log(response);
-        
         if (isErrorResponse(response)) {
 
             throw thunkApi.rejectWithValue(response.message);

@@ -1,10 +1,10 @@
-import { Avatar, Box, Button, Collapse, Divider, Group, rem, ScrollArea, Stack, Text, useMantineColorScheme } from '@mantine/core'
+import { ActionIcon, Avatar, Box, Button, Center, Collapse, Divider, Group, rem, ScrollArea, Stack, Text, useMantineColorScheme } from '@mantine/core'
 import classes from './Drawer.module.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { navRoutes } from '../navRoutes'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { userContextMenuItems } from '../UserContextMenu'
-import { IconArrowsLeftRight, IconChevronDown, IconChevronUp, IconTrash } from '@tabler/icons-react'
+import { IconArrowsLeftRight, IconChevronDown, IconChevronUp, IconMoon, IconSun, IconTrash } from '@tabler/icons-react'
 import { useDisclosure } from '@mantine/hooks'
 import { logoutThunk } from '../../../store/thunks/user/auth/logout.thunk'
 // import { logout } from '../../../store/slices/user/userSlice'
@@ -23,6 +23,7 @@ export default function Drawer({ disclosure }: {
 
   const isLoggedIn = useAppSelector((state) => state.user.loggedIn);
   const username = useAppSelector((state) => state.user.username);
+  const profilePic = useAppSelector((state) => state.user.profilePic);
   const userLoading = useAppSelector((state) => state.user.userLoading);
 
   const [opened, collapseDisclosure] = useDisclosure(false);
@@ -36,7 +37,18 @@ export default function Drawer({ disclosure }: {
   }
 
   return (
-    <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
+    <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md" mt="-md">
+
+      <Center onClick={scheme.toggleColorScheme} bg={"brand.4"} h={40}>
+
+        <ActionIcon variant='transparent'>
+
+          <IconMoon className={classes.moon} />
+          <IconSun className={classes.sun} />
+
+        </ActionIcon>
+
+      </Center>
 
       {
         navRoutes.map((route, idx) => (
@@ -47,6 +59,7 @@ export default function Drawer({ disclosure }: {
 
         ))
       }
+
       <Divider my="sm" />
 
       <Group justify="center" grow>
@@ -63,8 +76,8 @@ export default function Drawer({ disclosure }: {
             !userLoading &&
             <>
 
-              <Button fullWidth variant='transparent' onClick={() => collapseDisclosure.toggle()} leftSection={
-                <Avatar variant='transparent' radius="xl" />
+              <Button fullWidth variant='transparent' h={"100%"} onClick={() => collapseDisclosure.toggle()} leftSection={
+                <Avatar src={profilePic} variant='transparent' radius="xl" />
               }
                 rightSection={
                   opened ? <IconChevronDown /> : <IconChevronUp />

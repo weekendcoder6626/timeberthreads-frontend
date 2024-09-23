@@ -11,7 +11,7 @@ import { ResponseType } from "./resources/response.type";
  * @param password 
  * @returns Success or Error response
  */
-export async function registerAPI(email: string, username: string, phNumber: string, password: string, signal: AbortSignal): Promise<ResponseType> {
+export async function registerAPI(email: string, username: string, phNumber: string, password: string, signal?: AbortSignal): Promise<ResponseType> {
 
     try {
 
@@ -39,7 +39,7 @@ export async function registerAPI(email: string, username: string, phNumber: str
  * @returns Success or Error response
  * @returns User details and Auth-Token
  */
-export async function loginAPI(email: string, password: string, signal: AbortSignal): Promise<ResponseType<User>> {
+export async function loginAPI(email: string, password: string, signal?: AbortSignal): Promise<ResponseType<User>> {
 
     try {
 
@@ -63,7 +63,7 @@ export async function loginAPI(email: string, password: string, signal: AbortSig
  * @method POST
  * @returns Success or Error response
  */
-export async function logoutAPI(signal: AbortSignal): Promise<ResponseType> {
+export async function logoutAPI(signal?: AbortSignal): Promise<ResponseType> {
 
     try {
 

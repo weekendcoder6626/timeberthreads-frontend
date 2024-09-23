@@ -4,7 +4,6 @@ import { PropsWithChildren } from "react";
 import { useAppDispatch } from "../../store/hooks";
 import { logoutThunk } from "../../store/thunks/user/auth/logout.thunk";
 import { useNavigate } from "react-router-dom";
-// import { logout } from "../../store/slices/user/userSlice";
 
 export const userContextMenuItems = [
     {
@@ -33,13 +32,17 @@ export const userContextMenuItems = [
       icon: <IconShoppingBag style={{ width: rem(14), height: rem(14) }} />
     }
   ]
+
+interface UserContextMenuProps extends PropsWithChildren {
+  // mode? : "header"
+}
   
-export default function UserContextMenu({ children }: PropsWithChildren) {
+export default function UserContextMenu({ children }: UserContextMenuProps) {
   
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
-  
+
     const logoutHandler = () => {
   
       dispatch(logoutThunk());
@@ -52,6 +55,7 @@ export default function UserContextMenu({ children }: PropsWithChildren) {
         </Menu.Target>
   
         <Menu.Dropdown>
+
   
           {
             userContextMenuItems.map((item, idx) => (

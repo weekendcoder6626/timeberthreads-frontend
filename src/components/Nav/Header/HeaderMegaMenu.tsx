@@ -8,9 +8,13 @@ import {
   Avatar,
   ActionIcon,
   MantineSize,
+  Tooltip,
+  Indicator,
+  Center,
 } from '@mantine/core';
 import {
   IconMoon,
+  IconShoppingBag,
   IconSun,
 } from '@tabler/icons-react';
 import classes from './HeaderMegaMenu.module.css';
@@ -21,7 +25,6 @@ import { useAppSelector } from '../../../store/hooks';
 import { navRoutes } from '../navRoutes';
 
 import UserContextMenu from '../UserContextMenu';
-
 
 export function HeaderMegaMenu({ drawerOpened, disclosure, breakpoint }: {
   drawerOpened: boolean, disclosure: {
@@ -35,12 +38,37 @@ export function HeaderMegaMenu({ drawerOpened, disclosure, breakpoint }: {
   const username = useAppSelector((state) => state.user.username);
   const profilePic = useAppSelector((state) => state.user.profilePic);
   const userLoading = useAppSelector((state) => state.user.userLoading);
+  const cart = useAppSelector((state) => state.user.cart);
+
+  const totalCartLength = cart?.reduce((result, item) => (result + item.quantity), 0);
 
   const navigate = useNavigate();
 
   const { toggleColorScheme } = useMantineColorScheme({
     keepTransitions: true,
   });
+
+  const endItem = (
+    !isLoggedIn ?
+      <Button variant='filled' onClick={() => navigate("/auth")}>
+        <Text size="xs" className={classes.loginReg}>
+          Login/Register
+        </Text>
+      </Button>
+      :
+      <UserContextMenu>
+
+        <Tooltip label={username}>
+        
+          <Button visibleFrom={breakpoint} variant='transparent' p={6} h={"100%"} leftSection={
+            <Avatar src={profilePic} variant='transparent' size={"md"}>
+            </Avatar>
+          } />
+        
+        </Tooltip>
+
+      </UserContextMenu>
+  );
 
   return (
     <Box style={{ position: 'sticky' }}>
@@ -63,29 +91,32 @@ export function HeaderMegaMenu({ drawerOpened, disclosure, breakpoint }: {
 
           <Group>
 
-            <ActionIcon onClick={toggleColorScheme} variant='transparent'>
+            <ActionIcon visibleFrom={breakpoint} onClick={toggleColorScheme} variant='transparent'>
 
               <IconMoon className={classes.moon} />
               <IconSun className={classes.sun} />
 
             </ActionIcon>
 
+            <Indicator disabled={ !cart || cart.length === 0 } label={
+              cart && <Center>
+              
+                <Text fz={8}>{totalCartLength}</Text>
+              
+              </Center>
+            } position='bottom-end' offset={8} size={13} >
+            
+              <ActionIcon variant='transparent'>
+  
+                <IconShoppingBag />
+  
+              </ActionIcon>
+            
+            </Indicator>
+
             <Group visibleFrom={breakpoint}>
               {
-                !isLoggedIn ? !userLoading && <Button variant='filled' onClick={() => navigate("/auth")}>
-                  <Text size="xs" className={classes.loginReg}>
-                    Login/Register
-                  </Text>
-                </Button>
-                  :
-                  !userLoading &&
-                  <UserContextMenu>
-                    <Button visibleFrom={breakpoint} variant='transparent' leftSection={
-                      <Avatar src={profilePic} variant='transparent' radius="xl" />
-                    }>
-                      {username}
-                    </Button>
-                  </UserContextMenu>
+                !userLoading ? endItem : <Button loading variant='transparent'/>
               }
             </Group>
 
@@ -96,6 +127,6 @@ export function HeaderMegaMenu({ drawerOpened, disclosure, breakpoint }: {
 
         </Group>
       </div>
-    </Box>
+    </Box >
   );
 }

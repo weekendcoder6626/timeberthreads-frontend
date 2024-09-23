@@ -15,6 +15,8 @@ export const refreshUserStateThunk = createAThunk(
             throw thunkApi.rejectWithValue(response.message);
         }
 
+        console.log(response.payload);
+
         return response.payload as CurrentUser;
 
     },

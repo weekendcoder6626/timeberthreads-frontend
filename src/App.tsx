@@ -13,7 +13,8 @@ import { isLoggedIn } from "./store/auth";
 import { Notifications } from "@mantine/notifications";
 import { useAppDispatch } from "./store/hooks";
 import { refreshUserStateThunk } from "./store/thunks/user/refreshUserState.thunk";
-import { setUserState } from "./store/slices/user/userSlice";
+import { setAllLoading, setUserState, updateCartState } from "./store/slices/user/userSlice";
+import { getLocalCart } from "./cache/cart/localCart";
 
 
 export default function App() {
@@ -22,7 +23,10 @@ export default function App() {
 
   useEffect(() => {
 
-    let abort: (reason?: string) => void;
+    let abort: (reason?: string) => void = (reason) => {
+      reason;
+      return;
+    };
 
     if(isLoggedIn()) {
 
@@ -32,7 +36,11 @@ export default function App() {
 
     } else {
 
-      dispatch(setUserState({userLoading: false}));
+      dispatch(setAllLoading(false));
+      dispatch(updateCartState(
+        getLocalCart() || []
+      ));
+
     }
 
     return () => {

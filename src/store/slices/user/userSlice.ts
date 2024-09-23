@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { loginThunk } from "../../thunks/user/auth/login.thunk";
 import { registerThunk } from "../../thunks/user/auth/register.thunk";
 import { removeToken, setToken } from "../../auth";
@@ -7,6 +7,7 @@ import { refreshUserStateThunk } from "../../thunks/user/refreshUserState.thunk"
 import { UserState } from "./UserState.type";
 import { addProductToWishListThunk } from "../../thunks/user/wishlist/addProductToWishList.thunk";
 import { removeProductFromWishListThunk } from "../../thunks/user/wishlist/removeProductFromWishList.thunk";
+import { Cart } from "../../../types/DBTypes/Cart.type";
 import { ProductOverviewType } from "../../../types/DBTypes/Product.type";
 
 export const wait = (ms: number) => new Promise(r => setTimeout(r, ms))
@@ -31,7 +32,7 @@ export const userSliceWithThunks = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setUserState: (state, action) => {
+        setUserState: (state, action: PayloadAction<Partial<UserState>>) => {
 
             const newState: UserState = {
                 ...state,
@@ -41,6 +42,32 @@ export const userSliceWithThunks = createSlice({
             return newState;
 
         },
+
+        setAllLoading: (state, action:PayloadAction<boolean>) => {
+
+            state.userLoading = action.payload;
+            state.wishlistLoading = action.payload;
+            state.cartLoading = action.payload;
+
+        },
+
+        addWishlist: (state, action: PayloadAction<ProductOverviewType>) => {
+
+            state.wishlist?.push(action.payload);
+
+        },
+
+        removeWishlist: (state, action: PayloadAction<ProductOverviewType>) => {
+
+            state.wishlist?.splice(state.wishlist.findIndex((prod) => prod.productId === action.payload.productId), 1)
+
+        },
+
+        updateCartState: (state, action: PayloadAction<Cart>) => {
+
+            state.cart = action.payload;
+
+        }
     },
 
     extraReducers: (builder) => {
@@ -72,10 +99,12 @@ export const userSliceWithThunks = createSlice({
             })
             .addCase(refreshUserStateThunk.rejected, (state, action) => {
 
-                state.userLoading = true;
-                state.wishlistLoading = true;
-                state.cartLoading = true;
+                state.userLoading = false;
+                state.wishlistLoading = false;
+                state.cartLoading = false;
                 state.message = action.payload || action.error.message;
+
+                removeToken();
             });
 
         // REGISTER
@@ -162,9 +191,9 @@ export const userSliceWithThunks = createSlice({
             })
             .addCase(logoutThunk.rejected, (state, action) => {
 
-                state.userLoading = true;
-                state.wishlistLoading = true;
-                state.cartLoading = true;
+                state.userLoading = false;
+                state.wishlistLoading = false;
+                state.cartLoading = false;
                 state.message = action.payload || action.error.message
             });
 
@@ -177,21 +206,9 @@ export const userSliceWithThunks = createSlice({
             })
             .addCase(addProductToWishListThunk.fulfilled, (state, action) => {
 
-                const newWishlist: ProductOverviewType[] = [];
-
-                if (!state.wishlist) {
-
-                    newWishlist.push(action.payload.product);
-                } else {
-
-                    newWishlist.push(...state.wishlist, action.payload.product);
-
-                }
-
                 const newState: UserState = {
                     ...state,
                     wishlistLoading: false,
-                    wishlist: newWishlist,
                     message: action.payload.message
                 }
 
@@ -213,27 +230,9 @@ export const userSliceWithThunks = createSlice({
             })
             .addCase(removeProductFromWishListThunk.fulfilled, (state, action) => {
 
-                const newWishlist: ProductOverviewType[] = [];
-
-                if (!state.wishlist) {
-
-                    return state;
-
-                } else {
-
-                    newWishlist.push(...state.wishlist.filter((prod) => {
-
-                        console.log(prod.productId !== action.payload.productId);
-
-                        return prod.productId !== action.payload.productId
-                    }));
-
-                }
-
                 const newState: UserState = {
                     ...state,
                     wishlistLoading: false,
-                    wishlist: newWishlist,
                     message: action.payload.message
                 }
 
@@ -250,6 +249,6 @@ export const userSliceWithThunks = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setUserState } = userSliceWithThunks.actions
+export const { setUserState, setAllLoading, addWishlist, removeWishlist, updateCartState } = userSliceWithThunks.actions
 
 export const userWithThunksReducer = userSliceWithThunks.reducer

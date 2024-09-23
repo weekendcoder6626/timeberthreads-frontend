@@ -1,3 +1,4 @@
+import { Cart } from "./Cart.type";
 import { ProductOverviewType } from "./Product.type";
 
 export interface User {
@@ -7,7 +8,7 @@ export interface User {
     phNumber: string,
     password?: string,
     wishlist?: ProductOverviewType[],
-    cart?: ProductOverviewType[],
+    cart?: Cart,
     isFirstLogin: boolean,
 }
 

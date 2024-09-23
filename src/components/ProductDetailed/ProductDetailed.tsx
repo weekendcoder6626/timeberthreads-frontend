@@ -1,39 +1,56 @@
 import { useParams } from "react-router-dom"
-import { getProductDetailedAPI } from "../../api/product.api";
-import { useState, useEffect, ChangeEventHandler } from "react";
+import { addReviewAPI, getProductDetailedAPI, removeReviewAPI } from "../../api/product.api";
+import { useState, useEffect, ChangeEvent } from "react";
 import { isErrorResponse } from "../../api/resources/resources";
 import { triggerNotification } from "../triggerNotification";
-import { Divider, Grid, Group, Stack, Text, Image, Center, useMantineColorScheme, Rating, ActionIcon, Button, Flex, Tabs, Avatar, Badge, Progress, Textarea } from "@mantine/core";
+import { Divider, Grid, Group, Stack, Text, Image, Center, useMantineColorScheme, Rating, Button, Flex, Tabs, Avatar, Badge, Progress, Textarea, Menu } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
-import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
-import { ProductDetailedType, ProductOverviewType } from "../../types/DBTypes/Product.type";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { addProductToWishListThunk } from "../../store/thunks/user/wishlist/addProductToWishList.thunk";
-import { removeProductFromWishListThunk } from "../../store/thunks/user/wishlist/removeProductFromWishList.thunk";
+import { IconDotsVertical, IconTrashFilled, IconUser } from "@tabler/icons-react";
+import { ProductDetailedType } from "../../types/DBTypes/Product.type";
+import { useAppSelector } from "../../store/hooks";
+import { Review } from "../../types/DBTypes/Review.type";
+import AuthModal from "../LoginRegister/Reusable/AuthModal";
+import { useDisclosure } from "@mantine/hooks";
+import AddToCartButton from "../HOButtons/AddToCartButton";
+import AddToWishlistButton from "../HOButtons/AddToWishlistButton";
 
 interface ProductTabsProps {
     product: ProductDetailedType,
-    ratingSplit: { [rating: number]: number }
+    ratingSplit: { [rating: number]: number },
+    addReviewHandler: (review: Review) => Promise<void>,
+    removeReviewHandler: (review: Review) => Promise<void>,
+    reviewLoading: boolean,
 }
 
-function ProductTabs({ product, ratingSplit }: ProductTabsProps) {
+function ProductTabs({ product, ratingSplit, addReviewHandler, removeReviewHandler, reviewLoading }: ProductTabsProps) {
 
     const [activeTab, setActiveTab] = useState<string | null>("description");
 
     const [rating, setRating] = useState(0);
-    // const [readOnly, setReadOnly] = useState(false);
 
     const [review, setReview] = useState("");
 
-    const setReviewHandler: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+    const email = useAppSelector((state) => state.user.email);
 
+    const loggedIn = useAppSelector((state) => state.user.loggedIn);
+
+    const setReviewHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setReview(e.target.value);
-
     }
 
-    const submitHandler = () => {
+    const submitAddHandler = async (review: Review) => {
 
-        console.log(rating, review);
+        if (product.reviews?.findIndex((rev) => rev.email === email) !== -1) {
+            triggerNotification("You have already posted a review for this product!");
+            return;
+        }
+
+        if (loggedIn) {
+            setRating(0);
+            setReview("");
+        }
+
+        await addReviewHandler(review);
 
     }
 
@@ -87,7 +104,7 @@ function ProductTabs({ product, ratingSplit }: ProductTabsProps) {
 
                                         <Rating value={r} fractions={2} readOnly my={10} />
 
-                                        <Text>{ratingSplit[r]}%</Text>
+                                        <Text>{(ratingSplit[r]).toFixed(2)}%</Text>
 
                                     </Group>
 
@@ -102,24 +119,67 @@ function ProductTabs({ product, ratingSplit }: ProductTabsProps) {
                     <Text component="h1" fw={600} fz={25} mb={10}>Reviews</Text>
 
                     {
-                        product.reviews?.map((review, idx) => (
+                        !!product.reviews && product.reviews.length > 0 ?
+                            product.reviews.map((review, idx) => (
 
-                            <Stack key={idx}>
+                                <Stack key={idx}>
 
-                                <Flex gap={14} direction={{ base: "column", md: "row" }} align="flex-start">
-                                    <Avatar src={review.profilePic} />
-                                    <Stack gap={0}>
-                                        <Text component="h1">{review.username}</Text>
-                                        <Rating value={review.rating} fractions={2} readOnly my={10} />
-                                        <Text>{review.review}</Text>
-                                    </Stack>
-                                </Flex>
+                                    <Flex gap={14} direction={{ base: "column", md: "row" }} align="flex-start">
+                                        <Avatar src={review.profilePic} />
+                                        <Stack gap={0}>
+                                            <Group gap={-10}>
+
+                                                <Text component="h1" c={review.email === email ? "brand" : ""}>{review.username}</Text>
+
+                                                <Menu shadow="md" width={200}>
+                                                    <Menu.Target>
+                                                        <IconDotsVertical cursor={"pointer"} size={17}  />
+                                                    </Menu.Target>
+
+                                                    <Menu.Dropdown>
+
+                                                        <Menu.Item leftSection={
+                                                            <IconUser size={17} />
+                                                        }>
+                                                            Go to Profile
+                                                        </Menu.Item>
+
+                                                        {review.email === email && <Menu.Item onClick={(() => removeReviewHandler({
+                                                            email,
+                                                            rating: review.rating,
+                                                        }))} color="red" leftSection={
+                                                            <IconTrashFilled size={17} />
+                                                        }>
+                                                            Delete review
+                                                        </Menu.Item>}
+
+                                                    </Menu.Dropdown>
+                                                </Menu>
+
+                                            </Group>
+
+
+                                            <Rating value={review.rating} fractions={2} readOnly my={10} />
+                                            <Text>{review.review}</Text>
+                                        </Stack>
+                                    </Flex>
+
+
+                                    <Divider my={20} />
+
+                                </Stack>
+
+                            ))
+
+                            :
+
+                            <Stack>
+
+                                <Text fw={200} mt={-15}>No reviews!</Text>
 
                                 <Divider my={20} />
 
                             </Stack>
-
-                        ))
                     }
 
                     <Text fw={600} fz={25} mt={-10}>Write a review</Text>
@@ -143,11 +203,21 @@ function ProductTabs({ product, ratingSplit }: ProductTabsProps) {
                                 autosize
                                 minRows={2}
                                 value={review}
-                                onChange={setReviewHandler}
+                                onChange={(e) => setReviewHandler(e)}
                                 variant="default"
                             />
 
-                            <Button w={100} onClick={submitHandler}>Submit</Button>
+                            {!reviewLoading
+                                ?
+                                <Button w={100} disabled={rating === 0} onClick={(() => submitAddHandler({
+                                    email,
+                                    rating,
+                                    review
+                                }))}>
+                                    Submit
+                                </Button>
+                                :
+                                <Button variant="transparent" loading />}
 
                         </Stack>
 
@@ -164,6 +234,8 @@ export default function ProductDetailed() {
 
     const params = useParams();
 
+    const [authModalOpened, { open: authModalOpen, close: authModalClose }] = useDisclosure();
+
     const { colorScheme } = useMantineColorScheme();
 
     const [product, setProduct] = useState(null as ProductDetailedType | null);
@@ -173,33 +245,9 @@ export default function ProductDetailed() {
     const [loading, setLoading] = useState(true);
     const [error, seterror] = useState(false);
 
-    const wishlist = useAppSelector((state) => state.user.wishlist);
-    const wishlistLoading = useAppSelector((state) => state.user.wishlistLoading);
+    const loggedIn = useAppSelector((state) => state.user.loggedIn);
 
-    const dispatch = useAppDispatch();
-
-    const isWishlist = (productId: string) => !!wishlist && wishlist.findIndex((prod) => prod.productId === productId) !== -1;
-
-    const wishListHandler = (product: ProductOverviewType) => {
-
-        return () => {
-
-            if(wishlistLoading)
-                return;
-
-            if (isWishlist(product.productId)) {
-
-                dispatch(removeProductFromWishListThunk({ productId: product.productId }));
-
-            } else {
-
-                dispatch(addProductToWishListThunk({ product }));
-
-            }
-
-        }
-
-    }
+    const [reviewLoading, setReviewLoading] = useState(false);
 
     useEffect(() => {
 
@@ -207,18 +255,24 @@ export default function ProductDetailed() {
 
         (async () => {
 
-            const response = await getProductDetailedAPI(params.id as string, controller.signal);
+            try {
 
-            if (isErrorResponse(response)) {
+                setLoading(true);
 
-                triggerNotification(response.message);
+                const response = await getProductDetailedAPI(params.id as string, controller.signal);
+
+                if (isErrorResponse(response))
+                    throw new Error(response.message);
+
+                setProduct(response.payload as ProductDetailedType);
+                setLoading(false);
+
+            } catch (e: any) {
+
+                triggerNotification(e?.message || "Some error occured");
                 seterror(true);
                 setProduct(null);
 
-            }
-            else {
-
-                setProduct(response.payload as ProductDetailedType)
             }
         })();
 
@@ -231,41 +285,132 @@ export default function ProductDetailed() {
         if (!product)
             return;
 
-        setTimeout(() => {
-            setLoading(false);
-        }, 500);
+        const ratingCalc: { [rating: string]: number } = {};
 
-        const rating: { [rating: string]: number } = {};
+        product?.reviews?.forEach((rev) => {
 
-        product?.reviews?.map((rev) => {
+            if (!ratingCalc[rev.rating]) {
 
-            if (!rating[rev.rating]) {
-
-                rating[rev.rating] = 1;
+                ratingCalc[rev.rating] = 1;
                 return;
 
             }
 
-            rating[rev.rating]++;
+            ratingCalc[rev.rating]++;
 
         });
 
-        Object.keys(rating).map((rate) => {
+        Object.keys(ratingCalc).forEach((rate) => {
 
-            const r = parseFloat(rate);
+            const r = ratingCalc[parseFloat(rate)];
 
             const perc = r / (product.reviews?.length || 1);
 
-            rating[r] = perc * 100;
+            ratingCalc[rate] = perc * 100;
 
-        })
+        });
 
-        setRatingSplit(rating);
+        setRatingSplit(ratingCalc);
 
-    }, [product])
+    }, [product]);
+
+    const addReviewHandler = async (review: Review) => {
+
+        try {
+
+            if (reviewLoading)
+                return;
+
+            if (!loggedIn) {
+
+                authModalOpen();
+                return;
+
+            }
+
+            setReviewLoading(true);
+
+            const res = await addReviewAPI(product!.productId, review);
+
+            if (isErrorResponse(res)) {
+
+                throw new Error(res.message);
+
+            }
+
+            setProduct((prev) => ({
+                ...prev!,
+                reviews: res.payload.reviews,
+                rating: res.payload.rating
+            }));
+
+            setReviewLoading(false);
+
+            triggerNotification("Review added");
+
+        } catch (e: any) {
+
+            setReviewLoading(false);
+            triggerNotification(e?.message || "Some error occurred");
+
+        }
+
+    }
+
+    const removeReviewHandler = async (review: Review) => {
+
+        try {
+
+            if (reviewLoading)
+                return;
+
+            if (!loggedIn) {
+
+                authModalOpen();
+                return;
+
+            }
+
+
+            setReviewLoading(true);
+
+            const res = await removeReviewAPI(product!.productId, review.email);
+
+            if (isErrorResponse(res)) {
+
+                throw new Error(res.message);
+
+            }
+
+            setProduct((prev) => ({
+                ...prev!,
+                reviews: res.payload.reviews,
+                rating: res.payload.rating
+            }))
+
+            setReviewLoading(false);
+
+            triggerNotification("Review removed");
+
+        } catch (e: any) {
+
+            setReviewLoading(false);
+            triggerNotification(e?.message || "Some error occurred");
+
+        }
+
+    }
 
     return (
         <>
+
+            <AuthModal modalProps={
+                {
+                    opened: authModalOpened,
+                    onClose: authModalClose,
+                }
+            } />
+
             {
                 !loading && !error && product
                     ?
@@ -343,13 +488,9 @@ export default function ProductDetailed() {
 
                                     <Flex mt={2} gap={10}>
 
-                                        <Button miw={100} w={"20%"} style={{ fontSize: 12 }} h={35}>
-                                            Add to cart
-                                        </Button>
+                                        <AddToCartButton product={product} />
 
-                                        <ActionIcon onClick={wishListHandler(product)} variant="transparent" radius={0} h={35} w={40}>
-                                            {!isWishlist(product.productId) ? <IconHeart /> : <IconHeartFilled />}
-                                        </ActionIcon>
+                                        <AddToWishlistButton product={product} />
 
                                     </Flex>
 
@@ -379,7 +520,7 @@ export default function ProductDetailed() {
                             </Stack>
                         </Grid.Col>
                         <Grid.Col span={12}>
-                            <ProductTabs product={product} ratingSplit={ratingSplit} />
+                            <ProductTabs product={product} ratingSplit={ratingSplit} addReviewHandler={addReviewHandler} removeReviewHandler={removeReviewHandler} reviewLoading={reviewLoading} />
                         </Grid.Col>
                     </Grid>
                     :

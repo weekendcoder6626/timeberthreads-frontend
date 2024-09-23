@@ -9,7 +9,7 @@ import { ResponseType } from "./resources/response.type";
  * @returns Success or Error response
  * @returns User details
  */
-export async function getUserByEmailAPI(email: string, signal: AbortSignal): Promise<ResponseType<User>> {
+export async function getUserByEmailAPI(email: string, signal?: AbortSignal): Promise<ResponseType<User>> {
 
     try {
 
@@ -34,7 +34,7 @@ export async function getUserByEmailAPI(email: string, signal: AbortSignal): Pro
  * @returns Success or Error response
  * @returns User details
  */
-export async function getCurrentUserAPI(signal: AbortSignal): Promise<ResponseType<User>> {
+export async function getCurrentUserAPI(signal?: AbortSignal): Promise<ResponseType<User>> {
 
     try {
 
@@ -54,14 +54,12 @@ export async function getCurrentUserAPI(signal: AbortSignal): Promise<ResponseTy
 }
 
 /**
- * @description Used to login an existing user
+ * @description Adds given product to wishlist
  * @method POST
- * @param email 
- * @param password 
+ * @param productId 
  * @returns Success or Error response
- * @returns User details and Auth-Token
  */
-export async function addProductToWishlistAPI(productId: string, signal: AbortSignal): Promise<ResponseType> {
+export async function addProductToWishlistAPI(productId: string, signal?: AbortSignal): Promise<ResponseType> {
 
     try {
 
@@ -80,7 +78,13 @@ export async function addProductToWishlistAPI(productId: string, signal: AbortSi
     }
 }
 
-export async function removeProductFromWishlistAPI(productId: string, signal: AbortSignal): Promise<ResponseType> {
+/**
+ * @description Removes given product to wishlist
+ * @method POST
+ * @param productId 
+ * @returns Success or Error response
+ */
+export async function removeProductFromWishlistAPI(productId: string, signal?: AbortSignal): Promise<ResponseType> {
 
     try {
 
@@ -88,6 +92,31 @@ export async function removeProductFromWishlistAPI(productId: string, signal: Ab
             method: 'POST',
             headers: getFullHeader("with token"),
             body: JSON.stringify({ productId }),
+            signal
+        });
+
+        return await rawResponse.json();
+
+    } catch (e) {
+
+        return await Promise.resolve({ status: 400, message: "", payload: { error: "Issue" } })
+    }
+}
+
+/**
+ * @description Updates cart
+ * @method POST
+ * @param cart Object
+ * @returns Success or Error response
+ */
+export async function updateCartAPI(cart: { productId: string, quantity: number }[], signal?: AbortSignal): Promise<ResponseType> {
+
+    try {
+
+        const rawResponse = await fetch(`${BASE_URL}/user/updateCart`, {
+            method: 'POST',
+            headers: getFullHeader("with token"),
+            body: JSON.stringify({ cart }),
             signal
         });
 

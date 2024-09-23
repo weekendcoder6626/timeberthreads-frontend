@@ -2,7 +2,7 @@ import { ActionIcon, Button, Center, Space, Stack, TextInput, Title } from '@man
 import classes from './LoginRegister.module.css'
 import { IconAt, IconEye, IconEyeClosed } from '@tabler/icons-react';
 import { FormEvent, useState } from 'react';
-import { EmailSuggestions } from './EmailSuggestions';
+import { EmailSuggestions } from './Reusable/EmailSuggestions';
 
 import { useForm, isEmail } from '@mantine/form';
 // import { register } from '../../store/slices/user/userSlice';

@@ -1,0 +1,18 @@
+/* .card:hover {
+    background: rgb(228, 228, 228);
+    cursor: pointer;
+
+    @mixin dark {
+        background: rgb(63, 63, 63);
+    }
+}
+
+.card:active {
+    transform: translateY(2px);
+} */
+
+
+.productLink:hover {
+    color: rgb(184, 54, 184);
+    cursor: pointer;
+}

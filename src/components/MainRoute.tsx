@@ -7,9 +7,8 @@ import Drawer from './Nav/Drawer/Drawer';
 import classes from './MainRoute.module.css';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { useEffect } from 'react';
-// import { setUserState } from '../store/slices/user/userSlice';
-import { triggerNotification } from './triggerNotification';
 import { setUserState } from '../store/slices/user/userSlice';
+import { triggerNotification } from './triggerNotification';
 
 const headerBreakpoint = 'sm';
 
