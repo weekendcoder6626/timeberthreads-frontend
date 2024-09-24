@@ -177,7 +177,8 @@ export default function Login({ fromModal = false, closeModal }: Props) {
 
                         <Divider label="Or" labelPosition='center' />
 
-                        <GoogleButton />
+                        {/* TODO Google Auth must be implemented with this button */}
+                        {/* <GoogleButton /> */}
 
                     </Stack>
                 </form>
