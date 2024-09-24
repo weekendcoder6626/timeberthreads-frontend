@@ -101,7 +101,7 @@ export function HeaderMegaMenu({ drawerOpened, disclosure, breakpoint }: {
             <Indicator disabled={!cart || cart.length === 0} label={
               cart && <Center>
 
-                <Text fz={8}>{totalCartLength}</Text>
+                <Text style={{cursor: "pointer"}} fz={8}>{totalCartLength}</Text>
 
               </Center>
             } position='bottom-end' offset={8} size={13} onClick={() => navigate("/cart")}>

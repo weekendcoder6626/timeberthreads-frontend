@@ -1,4 +1,4 @@
-import { Grid, Card, Skeleton, Group, Button, Flex, Stack, Badge, Rating, Box, Center, Text, useMantineTheme, Title } from '@mantine/core';
+import { Grid, Card, Skeleton, Group, Button, Flex, Stack, Badge, Rating, Box, Center, Text, useMantineTheme, Title, Divider } from '@mantine/core';
 import AddToCartButton from '../HOButtons/AddToCartButton';
 import AddToWishlistButton from '../HOButtons/AddToWishlistButton';
 import classes from './ProductList.module.css';
@@ -25,11 +25,7 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
     const theme = useMantineTheme();
 
-    const cartSelectorOptions = mode !== "cart" ? {
-        equalityFn: () => true
-    } : {};
-
-    const cart = useAppSelector((state) => state.user.cart, cartSelectorOptions);
+    const cart =  mode === "cart" ? useAppSelector((state) => state.user.cart) : null;
 
     const totalPricePerProduct = cart?.map((item) => ({
         productId: item.product.productId,
@@ -106,6 +102,7 @@ export default function ProductList({ products, loading, error, mode = "feed", c
                                 onClick={() => clickHandler(product.productId)}
                                 src={product.smallImage || 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png'}
                                 height={"160px"}
+                                width={"160px"}
                                 style={{
                                     objectFit: "contain",
                                     borderRadius: 20,
@@ -217,6 +214,8 @@ export default function ProductList({ products, loading, error, mode = "feed", c
                                         <Title fz={"h3"}>Order summary</Title>
 
                                     </Center>
+
+                                    <Divider />
 
                                 </Card.Section>
 

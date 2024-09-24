@@ -26,6 +26,13 @@ function ProductTabs({ product, ratingSplit, addReviewHandler, removeReviewHandl
 
     const [activeTab, setActiveTab] = useState<string | null>("description");
 
+    const [showReviewMenu, setshowReviewMenu ] = useState(
+        product.reviews?.reduce((result: Record<string, boolean>, current) => {
+            result[current.email] = false
+            return result;
+        }, {}) || {} as Record<string, boolean>
+    );
+
     const [rating, setRating] = useState(0);
 
     const [review, setReview] = useState("");
@@ -122,7 +129,12 @@ function ProductTabs({ product, ratingSplit, addReviewHandler, removeReviewHandl
                         !!product.reviews && product.reviews.length > 0 ?
                             product.reviews.map((review, idx) => (
 
-                                <Stack key={idx}>
+                                <Stack key={idx} onMouseEnter={() => setshowReviewMenu((prev) => {
+                                    return { ...prev, [review.email]: true }
+                                })} 
+                                onMouseLeave={() => setshowReviewMenu((prev) => {
+                                    return { ...prev, [review.email]: false }
+                                })}>
 
                                     <Flex gap={14} direction={{ base: "column", md: "row" }} align="flex-start">
                                         <Avatar src={review.profilePic} />
@@ -131,7 +143,7 @@ function ProductTabs({ product, ratingSplit, addReviewHandler, removeReviewHandl
 
                                                 <Text component="h1" c={review.email === email ? "brand" : ""}>{review.username}</Text>
 
-                                                <Menu shadow="md" width={200}>
+                                                {showReviewMenu[review.email] && <Menu shadow="md" width={200}>
                                                     <Menu.Target>
                                                         <IconDotsVertical cursor={"pointer"} size={17}  />
                                                     </Menu.Target>
@@ -154,7 +166,7 @@ function ProductTabs({ product, ratingSplit, addReviewHandler, removeReviewHandl
                                                         </Menu.Item>}
 
                                                     </Menu.Dropdown>
-                                                </Menu>
+                                                </Menu>}
 
                                             </Group>
 
