@@ -2,7 +2,7 @@ import { ActionIcon, Button, Center, Divider, Group, Modal, Space, Stack, TextIn
 import classes from './LoginRegister.module.css'
 import { IconAt, IconEye, IconEyeClosed } from '@tabler/icons-react';
 import { useState } from 'react';
-import { GoogleButton } from '../HOButtons/GoogleButton';
+// import { GoogleButton } from '../HOButtons/GoogleButton';
 import { EmailSuggestions } from './Reusable/EmailSuggestions';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, isEmail } from '@mantine/form';
