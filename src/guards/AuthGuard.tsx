@@ -1,13 +1,22 @@
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import { isLoggedIn } from '../store/auth'
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 type Props = {}
 
 export default function AuthGuard({ children }: PropsWithChildren<Props>) {
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+
+    if(!isLoggedIn()) navigate("/auth")
+
+  }, [])  
+
   return (
-    <div>
-      { isLoggedIn() ? children : <Navigate to={"/login"} replace/> }
-    </div>
+    <>
+      { children }
+    </>
   )
 }

@@ -26,6 +26,7 @@ const initialState: UserState = {
     wishlist: undefined,
     cart: undefined,
     isFirstLogin: false,
+    error: false,
 }
 
 export const userSliceWithThunks = createSlice({
@@ -117,6 +118,7 @@ export const userSliceWithThunks = createSlice({
             .addCase(registerThunk.fulfilled, (state) => {
 
                 state.userLoading = false;
+                state.error = false;
                 state.message = "Registered Successfully!"
 
             })
@@ -124,6 +126,7 @@ export const userSliceWithThunks = createSlice({
 
                 state.userLoading = false;
                 state.message = action.payload || action.error.message;
+                state.error = true;
             });
 
         // LOGIN
@@ -147,6 +150,7 @@ export const userSliceWithThunks = createSlice({
                     loggedIn: true,
                     ...action.payload,
                     message: "Logged in successfully!",
+                    error: false,
                 }
 
                 return newState;
@@ -161,6 +165,7 @@ export const userSliceWithThunks = createSlice({
                     userLoading: false,
                     wishlistLoading: false,
                     cartLoading: false,
+                    error: true
                 }
 
                 return newState;
@@ -184,6 +189,7 @@ export const userSliceWithThunks = createSlice({
                     userLoading: false,
                     wishlistLoading: false,
                     cartLoading: false,
+                    error: false
                 }
 
                 return newState;
@@ -195,6 +201,7 @@ export const userSliceWithThunks = createSlice({
                 state.wishlistLoading = false;
                 state.cartLoading = false;
                 state.message = action.payload || action.error.message
+                state.error = true;
             });
 
         // ADD TO WISHLIST
@@ -209,7 +216,8 @@ export const userSliceWithThunks = createSlice({
                 const newState: UserState = {
                     ...state,
                     wishlistLoading: false,
-                    message: action.payload.message
+                    message: action.payload.message,
+                    error: false
                 }
 
                 return newState;
@@ -219,6 +227,7 @@ export const userSliceWithThunks = createSlice({
 
                 state.wishlistLoading = false;
                 state.message = action.payload || action.error.message
+                state.error = true;
             });
 
         // REMOVE FROM WISHLIST
@@ -233,7 +242,8 @@ export const userSliceWithThunks = createSlice({
                 const newState: UserState = {
                     ...state,
                     wishlistLoading: false,
-                    message: action.payload.message
+                    message: action.payload.message,
+                    error: false,
                 }
 
                 return newState;
@@ -243,6 +253,7 @@ export const userSliceWithThunks = createSlice({
 
                 state.wishlistLoading = false;
                 state.message = action.payload || action.error.message
+                state.error = true;
 
             });
     }

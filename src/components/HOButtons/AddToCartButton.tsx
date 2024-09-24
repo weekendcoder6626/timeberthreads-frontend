@@ -20,8 +20,6 @@ export default function AddToCartButton({ product }: Props) {
 
   const isInCart = (product: ProductOverviewType) => {
 
-    // console.log(cart);
-
     return cart && cart.length   > 0 && cart.findIndex((item) => product.productId === item.product.productId) !== -1;
   }
 

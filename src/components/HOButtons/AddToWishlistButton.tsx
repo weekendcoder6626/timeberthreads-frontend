@@ -6,7 +6,7 @@ import { addWishlist, removeWishlist } from "../../store/slices/user/userSlice";
 import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
 import { removeProductFromWishListThunk } from "../../store/thunks/user/wishlist/removeProductFromWishList.thunk";
 import { addProductToWishListThunk } from "../../store/thunks/user/wishlist/addProductToWishList.thunk";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AuthModal from "../LoginRegister/Reusable/AuthModal";
 
 type Props = {
@@ -24,17 +24,7 @@ export default function AddToWishlistButton({ product, externalDebounceMethod }:
 
     const [eventQueue, setEventQueue] = useState([] as ("add" | "remove")[]);
 
-    useEffect(() => {
-
-        console.log("mounted", product.productName);
-
-        return () => console.log("unmounted", product.productName);
-
-    })
-
     const debouncedWishlistUpdate = useDebouncedCallback((product: ProductOverviewType) => {
-
-        console.log(product);
 
         if (eventQueue[0] === eventQueue[eventQueue.length - 1]) return;
 
@@ -60,8 +50,6 @@ export default function AddToWishlistButton({ product, externalDebounceMethod }:
     const wishListHandler = (product: ProductOverviewType) => {
 
         return () => {
-
-            console.log(product);
 
             if (!loggedIn) {
 

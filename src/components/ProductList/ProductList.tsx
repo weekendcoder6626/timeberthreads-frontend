@@ -3,6 +3,7 @@ import AddToCartButton from '../HOButtons/AddToCartButton';
 import AddToWishlistButton from '../HOButtons/AddToWishlistButton';
 import classes from './ProductList.module.css';
 import { ProductOverviewType } from '../../types/DBTypes/Product.type';
+import CheckoutButton from '../HOButtons/CheckoutButton';
 
 const numberSkeleton = 4;
 const skeletonArray = Array(numberSkeleton).fill(0);
@@ -74,7 +75,10 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
                 <Grid.Col key={idx} span={12}>
 
-                    <Card shadow="sm" padding="lg" radius="md" className={classes.card} withBorder>
+                    <Card shadow="sm" padding="lg" radius="md" style={{
+                        borderBottomLeftRadius: mode === "cart" && idx === products.length - 1 ? 0 : "md",
+                        borderBottomRightRadius: mode === "cart" && idx === products.length - 1 ? 0 : "md"
+                        }} className={classes.card} withBorder>
 
                         <Flex direction={{ base: "column", sm: "row" }}>
 
@@ -116,7 +120,7 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
                                     <AddToCartButton product={product} />
 
-                                    { mode !== "cart" ? <AddToWishlistButton product={product} /> : null}
+                                    {mode !== "cart" ? <AddToWishlistButton product={product} /> : null}
 
                                 </Flex>
 
@@ -147,7 +151,6 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
                     </Card>
 
-
                 </Grid.Col>
 
             )
@@ -161,6 +164,10 @@ export default function ProductList({ products, loading, error, mode = "feed", c
             {!error ? <Grid>
 
                 {loading ? skeleton : MainCard}
+
+                {mode === "cart" && <Grid.Col span={12} mt={"-md"}>
+                    <CheckoutButton disabled={loading} />
+                </Grid.Col>}
 
             </Grid> :
                 <div>Oops! Some error occured</div>

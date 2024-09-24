@@ -4,6 +4,7 @@ import { IconAt } from '@tabler/icons-react';
 import { useState } from 'react';
 import { EmailSuggestions } from './Reusable/EmailSuggestions';
 
+// TODO Implement forgot password
 export default function ForgotPassword() {
 
     const [email, setEmail] = useState("")

@@ -15,8 +15,6 @@ export const loginThunk = createAThunk(
             throw thunkApi.rejectWithValue(response.message);
         }
 
-        console.log(response);
-
         return response.payload as CurrentUser;
 
     }

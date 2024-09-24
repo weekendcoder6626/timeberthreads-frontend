@@ -6,4 +6,5 @@ export interface UserState extends Omit<CurrentUser, "password"> {
     wishlistLoading: boolean,
     cartLoading: boolean,
     message?: string | null,
+    error: boolean
 }

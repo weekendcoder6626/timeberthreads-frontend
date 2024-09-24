@@ -59,12 +59,12 @@ export function HeaderMegaMenu({ drawerOpened, disclosure, breakpoint }: {
       <UserContextMenu>
 
         <Tooltip label={username}>
-        
+
           <Button visibleFrom={breakpoint} variant='transparent' p={6} h={"100%"} leftSection={
             <Avatar src={profilePic} variant='transparent' size={"md"}>
             </Avatar>
           } />
-        
+
         </Tooltip>
 
       </UserContextMenu>
@@ -98,25 +98,26 @@ export function HeaderMegaMenu({ drawerOpened, disclosure, breakpoint }: {
 
             </ActionIcon>
 
-            <Indicator disabled={ !cart || cart.length === 0 } label={
+            <Indicator disabled={!cart || cart.length === 0} label={
               cart && <Center>
-              
+
                 <Text fz={8}>{totalCartLength}</Text>
-              
+
               </Center>
-            } position='bottom-end' offset={8} size={13} >
-            
-              <ActionIcon variant='transparent'>
-  
+            } position='bottom-end' offset={8} size={13} onClick={() => navigate("/cart")}>
+              
+              <ActionIcon onClick={() => navigate("/cart")} variant='transparent'>
+
+
                 <IconShoppingBag />
-  
+
               </ActionIcon>
-            
+
             </Indicator>
 
             <Group visibleFrom={breakpoint}>
               {
-                !userLoading ? endItem : <Button loading variant='transparent'/>
+                !userLoading ? endItem : <Button loading variant='transparent' />
               }
             </Group>
 

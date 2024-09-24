@@ -7,8 +7,6 @@ export const updateCartThunk = createAThunk(
     'user/updateCart',
     async (input: { cart: Cart }, thunkApi) => {
 
-        console.log("Syncing with backend");
-
         // await wait(2000);
         const response = await updateCartAPI(input.cart.map((item) => ({productId: item.product.productId, quantity: item.quantity})), thunkApi.signal);
 
@@ -16,8 +14,6 @@ export const updateCartThunk = createAThunk(
 
             throw thunkApi.rejectWithValue(response.message);
         }
-
-        console.log(response);
 
         return;
 

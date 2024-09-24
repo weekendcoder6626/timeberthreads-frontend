@@ -37,7 +37,7 @@ export default function Explore() {
       } catch (e: any) {
 
         setProducts([]);
-        triggerNotification(e?.message || "Some error occured");
+        triggerNotification(e?.message);
         seterror(true);
 
       }

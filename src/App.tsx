@@ -13,7 +13,7 @@ import { isLoggedIn } from "./store/auth";
 import { Notifications } from "@mantine/notifications";
 import { useAppDispatch } from "./store/hooks";
 import { refreshUserStateThunk } from "./store/thunks/user/refreshUserState.thunk";
-import { setAllLoading, setUserState, updateCartState } from "./store/slices/user/userSlice";
+import { setAllLoading, updateCartState } from "./store/slices/user/userSlice";
 import { getLocalCart } from "./cache/cart/localCart";
 
 

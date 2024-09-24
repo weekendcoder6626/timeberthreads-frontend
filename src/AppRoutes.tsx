@@ -1,13 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import MainRoute from './components/MainRoute'
 import Home from './components/Home/Home'
-import NotFound from './components/NotFound/NotFound'
 import LoginRegister from './components/LoginRegister/LoginRegister'
 import ForgotPassword from './components/LoginRegister/ForgotPassword';
 import LogoutGuard from './guards/LogoutGuard'
 import Explore from './components/Explore/Explore'
 import ProductDetailed from './components/ProductDetailed/ProductDetailed'
 import Wishlist from './components/Wishlist/Wishlist'
+import Cart from './components/Cart/Cart'
+import AuthGuard from './guards/AuthGuard'
 
 export default function AppRoutes() {
 
@@ -33,7 +34,15 @@ export default function AppRoutes() {
           } />
 
           <Route path='wishlist' element={
-            <Wishlist />
+            <AuthGuard>
+            
+              <Wishlist />
+            
+            </AuthGuard>
+          } />
+
+          <Route path='cart' element={
+            <Cart />
           } />
 
           <Route path='product'>
@@ -67,7 +76,7 @@ export default function AppRoutes() {
           } />
 
           <Route path='not-found' element={
-            <NotFound />
+            <Navigate to={"/home"} replace />
           } />
 
         </Route>
