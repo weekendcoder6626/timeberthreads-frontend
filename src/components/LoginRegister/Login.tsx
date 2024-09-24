@@ -2,11 +2,9 @@ import { ActionIcon, Button, Center, Divider, Group, Modal, Space, Stack, TextIn
 import classes from './LoginRegister.module.css'
 import { IconAt, IconEye, IconEyeClosed } from '@tabler/icons-react';
 import { useState } from 'react';
-// import { GoogleButton } from '../HOButtons/GoogleButton';
 import { EmailSuggestions } from './Reusable/EmailSuggestions';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, isEmail } from '@mantine/form';
-// import { login } from '../../store/slices/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginThunk } from '../../store/thunks/user/auth/login.thunk';
 import { useDisclosure } from '@mantine/hooks';
@@ -32,9 +30,6 @@ export default function Login({ fromModal = false, closeModal }: Props) {
     }
 
     const userLoading = useAppSelector((state) => state.user.userLoading);
-
-    // const nav = useNavigate();
-    // const scheme = useMantineColorScheme();
 
     const InputProps = {
         wrapperProps: {

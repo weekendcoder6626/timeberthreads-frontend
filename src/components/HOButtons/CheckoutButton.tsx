@@ -37,7 +37,7 @@ export default function CheckoutButton({ disabled = false }: Props) {
                 }
             } />
 
-            <Button disabled={disabled} onClick={() => checkout()} radius={0} fullWidth leftSection={
+            <Button disabled={disabled} fullWidth onClick={() => checkout()} radius={0} leftSection={
                 <IconPlant />
             }>
                 Checkout

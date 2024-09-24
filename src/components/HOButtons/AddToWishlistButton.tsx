@@ -11,9 +11,10 @@ import AuthModal from "../LoginRegister/Reusable/AuthModal";
 
 type Props = {
     product: ProductOverviewType,
+    disabled?: boolean,
     externalDebounceMethod?: (product: ProductOverviewType) => void;
 }
-export default function AddToWishlistButton({ product, externalDebounceMethod }: Props) {
+export default function AddToWishlistButton({ product, externalDebounceMethod, disabled }: Props) {
 
     const [authModalOpened, { open: authModalOpen, close: authModalClose }] = useDisclosure();
 
@@ -95,7 +96,7 @@ export default function AddToWishlistButton({ product, externalDebounceMethod }:
                 }
             } />
 
-            <ActionIcon onClick={wishListHandler(product)} variant="transparent" radius={0} h={35} w={40}>
+            <ActionIcon disabled={disabled} onClick={wishListHandler(product)} variant="transparent" radius={0} h={35} w={40}>
                 {!isWishlist(product.productId) ? <IconHeart /> : <IconHeartFilled />}
             </ActionIcon>
 

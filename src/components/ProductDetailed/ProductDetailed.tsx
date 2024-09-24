@@ -508,7 +508,7 @@ export default function ProductDetailed() {
 
                                         {product.discountPercent && product.discountPercent !== 0 ? <Text>₹
                                             {
-                                                parseFloat((product.price * ((100 - product.discountPercent) / 100)).toPrecision(5))
+                                                parseFloat((product.price * ((100 - product.discountPercent) / 100)).toFixed(2))
                                             }</Text> : null}
 
                                     </Group>

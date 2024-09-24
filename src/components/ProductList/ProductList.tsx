@@ -1,9 +1,10 @@
-import { Grid, Card, Skeleton, Group, Button, Flex, Stack, Badge, Rating, Box, Center, Text, useMantineTheme } from '@mantine/core';
+import { Grid, Card, Skeleton, Group, Button, Flex, Stack, Badge, Rating, Box, Center, Text, useMantineTheme, Title } from '@mantine/core';
 import AddToCartButton from '../HOButtons/AddToCartButton';
 import AddToWishlistButton from '../HOButtons/AddToWishlistButton';
 import classes from './ProductList.module.css';
 import { ProductOverviewType } from '../../types/DBTypes/Product.type';
 import CheckoutButton from '../HOButtons/CheckoutButton';
+import { useAppSelector } from '../../store/hooks';
 
 const numberSkeleton = 4;
 const skeletonArray = Array(numberSkeleton).fill(0);
@@ -23,6 +24,28 @@ type Props = {
 export default function ProductList({ products, loading, error, mode = "feed", clickHandler }: Props) {
 
     const theme = useMantineTheme();
+
+    const cartSelectorOptions = mode !== "cart" ? {
+        equalityFn: () => true
+    } : {};
+
+    const cart = useAppSelector((state) => state.user.cart, cartSelectorOptions);
+
+    const totalPricePerProduct = cart?.map((item) => ({
+        productId: item.product.productId,
+        price: item.product.price * item.quantity
+    }));
+
+    const totalDiscountedPricePerProduct = cart?.map((item) => ({
+        productId: item.product.productId,
+        price: !!item.product.discountPercent && item.product.discountPercent !== 0 ?
+            parseFloat((item.product.price * ((100 - item.product.discountPercent) / 100) * item.quantity).toFixed(2))  : item.product.price * item.quantity
+    }))
+
+    const deliveryCharge = 70;
+
+    const itemsPrice = totalPricePerProduct?.reduce((result, item) => result + item.price, 0) || 0;
+    const discountedItemsPrice = totalDiscountedPricePerProduct?.reduce((result, item) => result + item.price, 0) || 0;
 
     // Skeleton
     const skeleton =
@@ -75,10 +98,7 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
                 <Grid.Col key={idx} span={12}>
 
-                    <Card shadow="sm" padding="lg" radius="md" style={{
-                        borderBottomLeftRadius: mode === "cart" && idx === products.length - 1 ? 0 : "md",
-                        borderBottomRightRadius: mode === "cart" && idx === products.length - 1 ? 0 : "md"
-                        }} className={classes.card} withBorder>
+                    <Card shadow="sm" padding="lg" radius="md" className={classes.card} withBorder>
 
                         <Flex direction={{ base: "column", sm: "row" }}>
 
@@ -94,23 +114,41 @@ export default function ProductList({ products, loading, error, mode = "feed", c
                                 alt={product.productName || 'Norway'}
                             />
 
-                            <Stack gap={0} ml={{ base: 0, md: 20 }} mt={{ base: 20, md: 0 }}>
+                            <Stack gap={0} ml={{ base: 0, sm: 20 }} mt={{ base: 20, md: 0 }}>
 
                                 <Stack onClick={() => clickHandler(product.productId)} className={classes.productLink} justify="space-between" align="flex-start" mb="xs" gap={0}>
 
                                     <Text fw={500}>{product.productName}</Text>
                                     <Text size="sm" style={{ color: 'var(--mantine-color-brand-7)' }} fw={500}>Seller: {product.sellerName}</Text>
-                                    {product.featured === 1 && <Badge ml={-2} mt={10} size="xs">Featured</Badge>}
+                                    {product.featured === 1 && mode !== "cart" && <Badge ml={-2} mt={10} size="xs">Featured</Badge>}
 
                                 </Stack>
 
                                 <Flex direction={"row"} gap={5} style={{ cursor: "pointer" }} onClick={() => clickHandler(product.productId)}>
 
-                                    <Text style={{ textDecoration: onSale ? "line-through" : "none" }}>₹{product.price}</Text>
+                                    {
+                                        mode !== "cart"
+                                            ?
+                                            <>
 
-                                    {onSale ? <Text>₹{
-                                        parseFloat((product.price * ((100 - product.discountPercent) / 100)).toPrecision(5))
-                                    }</Text> : <Text>&zwnj;</Text>}
+                                                <Text style={{ textDecoration: onSale ? "line-through" : "none" }}>₹{product.price}</Text>
+
+                                                {onSale ? <Text>₹{
+                                                    parseFloat((product.price * ((100 - product.discountPercent) / 100)).toFixed(2))
+                                                }</Text> : <Text>&zwnj;</Text>}
+
+                                            </>
+                                            :
+                                            <>
+
+                                                <Text style={{ textDecoration: onSale ? "line-through" : "none" }}>₹{(totalPricePerProduct?.filter((item) => item.productId === product.productId)[0].price)?.toFixed(2)}</Text>
+
+                                                {onSale ? <Text>₹{
+                                                    (totalDiscountedPricePerProduct?.filter((item) => item.productId === product.productId)[0].price)?.toFixed(2)
+                                                }</Text> : <Text>&zwnj;</Text>}
+
+                                            </>
+                                    }
 
                                 </Flex>
 
@@ -165,9 +203,71 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
                 {loading ? skeleton : MainCard}
 
-                {mode === "cart" && <Grid.Col span={12} mt={"-md"}>
-                    <CheckoutButton disabled={loading} />
-                </Grid.Col>}
+                {mode === "cart" &&
+
+                    <Grid.Col span={12} >
+
+                        <Center>
+
+                            <Card w={{ base: "100%", md: "50%" }} shadow="lg" radius={0} padding="lg" className={classes.card} withBorder>
+
+                                <Card.Section>
+                                    <Center py={6}>
+
+                                        <Title fz={"h3"}>Order summary</Title>
+
+                                    </Center>
+
+                                </Card.Section>
+
+                                <Stack pt={8} align='center' gap={8}>
+
+                                    <Group gap={8}>
+
+                                        <Text>Items:</Text>
+                                        <Text>₹{
+                                            (discountedItemsPrice).toFixed(2)
+                                        }</Text>
+
+                                    </Group>
+
+                                    <Group gap={8}>
+
+                                        <Text>Delivery:</Text>
+                                        <Text>₹70</Text>
+
+                                    </Group>
+
+                                    <Group gap={8}>
+
+                                        <Text>Total:</Text>
+                                        <Text>₹{
+                                            (discountedItemsPrice + deliveryCharge).toFixed(2)
+                                        }</Text>
+
+                                    </Group>
+
+                                    <Group gap={8}>
+
+                                        <Text>You saved ₹{(itemsPrice - discountedItemsPrice).toFixed(2)} in this order</Text>
+
+                                    </Group>
+
+                                </Stack>
+
+                                <Card.Section pt={10}>
+
+                                    <CheckoutButton disabled={loading} />
+
+                                </Card.Section>
+
+                            </Card>
+
+                        </Center>
+
+                    </Grid.Col>
+
+                }
 
             </Grid> :
                 <div>Oops! Some error occured</div>

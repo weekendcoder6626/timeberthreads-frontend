@@ -8,9 +8,10 @@ import { updateCartState } from "../../store/slices/user/userSlice";
 import { cartUpdate } from "../../cache/cart/cartUpdate";
 
 type Props = {
-  product: ProductOverviewType
+  product: ProductOverviewType,
+  disabled?: boolean
 }
-export default function AddToCartButton({ product }: Props) {
+export default function AddToCartButton({ product, disabled }: Props) {
 
   const cart = useAppSelector((state) => state.user.cart);
 
@@ -78,19 +79,19 @@ export default function AddToCartButton({ product }: Props) {
     <>
 
       {!isInCart(product) ?
-        <Button onClick={() => cartHandler(product, "add")} miw={100} w={"20%"} style={{ fontSize: 12 }} h={35}>
+        <Button disabled={disabled} onClick={() => cartHandler(product, "add")} miw={100} w={"20%"} style={{ fontSize: 12 }} h={35}>
           Add to cart
         </Button>
         :
         <Group>
 
-          <ActionIcon onClick={() => cartHandler(product, "add")}>
+          <ActionIcon disabled={disabled} onClick={() => cartHandler(product, "add")}>
             <IconPlus />
           </ActionIcon>
 
           <Text>{cart![cart!.findIndex((item) => item.product.productId === product.productId)].quantity}</Text>
 
-          <ActionIcon onClick={() => cartHandler(product, "subtract")}>
+          <ActionIcon disabled={disabled} onClick={() => cartHandler(product, "subtract")}>
             <IconMinus />
           </ActionIcon>
 

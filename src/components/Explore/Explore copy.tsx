@@ -144,7 +144,7 @@ export default function Explore() {
                   <Text style={{ textDecoration: onSale ? "line-through" : "none" }}>₹{product.price}</Text>
 
                   {onSale ? <Text>₹{
-                    parseFloat((product.price * ((100 - product.discountPercent) / 100)).toPrecision(5))
+                    parseFloat((product.price * ((100 - product.discountPercent) / 100)).toFixed(2))
                   }</Text> : <Text>&zwnj;</Text>}
 
                 </Flex>
