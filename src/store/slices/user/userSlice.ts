@@ -23,8 +23,8 @@ const initialState: UserState = {
     username: '',
     profilePic: '',
     phNumber: '',
-    wishlist: undefined,
-    cart: undefined,
+    wishlist: [],
+    cart: [],
     isFirstLogin: false,
     error: false,
 }

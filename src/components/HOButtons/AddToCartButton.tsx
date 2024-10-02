@@ -48,7 +48,12 @@ export default function AddToCartButton({ product, disabled }: Props) {
 
       case "subtract":
 
-        newCart = cart!.reduce((result, element) => {
+        if(!cart) {
+          newCart = [];
+          break;
+        }
+
+        newCart = cart.reduce((result, element) => {
 
           if (element.product.productId === product.productId) {
 

@@ -130,18 +130,18 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
                                                 <Text style={{ textDecoration: onSale ? "line-through" : "none" }}>₹{product.price}</Text>
 
-                                                {onSale ? <Text>₹{
-                                                    parseFloat((product.price * ((100 - product.discountPercent) / 100)).toFixed(2))
+                                                {onSale ? <Text>{
+                                                    "₹" + parseFloat((product.price * ((100 - product.discountPercent) / 100)).toFixed(2))
                                                 }</Text> : <Text>&zwnj;</Text>}
 
                                             </>
                                             :
                                             <>
 
-                                                <Text style={{ textDecoration: onSale ? "line-through" : "none" }}>₹{(totalPricePerProduct?.filter((item) => item.productId === product.productId)[0].price)?.toFixed(2)}</Text>
+                                                <Text style={{ textDecoration: onSale ? "line-through" : "none" }}>₹{(totalPricePerProduct?.filter((item) => item.productId === product.productId)[0]?.price)?.toFixed(2)}</Text>
 
-                                                {onSale ? <Text>₹{
-                                                    (totalDiscountedPricePerProduct?.filter((item) => item.productId === product.productId)[0].price)?.toFixed(2)
+                                                {onSale ? <Text>{
+                                                    "₹" + (totalDiscountedPricePerProduct?.filter((item) => item.productId === product.productId)[0]?.price)?.toFixed(2)
                                                 }</Text> : <Text>&zwnj;</Text>}
 
                                             </>
