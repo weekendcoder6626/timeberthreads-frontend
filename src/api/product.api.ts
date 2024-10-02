@@ -65,6 +65,8 @@ export async function addReviewAPI(productId: string, review: Review, signal?: A
 
     try {
 
+        review.email = review.email.toLowerCase();
+
         const rawResponse = await fetch(`${BASE_URL}/product/addReview`, {
             method: 'POST',
             headers: getFullHeader("with token"),
@@ -91,10 +93,12 @@ export async function removeReviewAPI(productId: string, email: string, signal?:
 
     try {
 
+        const lowEmail = email.toLowerCase();
+
         const rawResponse = await fetch(`${BASE_URL}/product/removeReview`, {
             method: 'POST',
             headers: getFullHeader("with token"),
-            body: JSON.stringify({ email, productId }),
+            body: JSON.stringify({ email: lowEmail, productId }),
             signal
         });
 

@@ -15,10 +15,12 @@ export async function registerAPI(email: string, username: string, phNumber: str
 
     try {
 
+        const lowEmail = email.toLowerCase();
+
         const rawResponse = await fetch(`${BASE_URL}/auth/register`, {
             method: 'POST',
             headers: getFullHeader("without token"),
-            body: JSON.stringify({ email, username, phNumber, password }),
+            body: JSON.stringify({ email: lowEmail, username, phNumber, password }),
             signal
         });
 
@@ -43,10 +45,12 @@ export async function loginAPI(email: string, password: string, signal?: AbortSi
 
     try {
 
+        const lowEmail = email.toLowerCase();
+
         const rawResponse = await fetch(`${BASE_URL}/auth/login`, {
             method: 'POST',
             headers: getFullHeader("without token"),
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email: lowEmail, password }),
             signal
         });
 

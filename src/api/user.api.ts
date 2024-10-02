@@ -13,7 +13,9 @@ export async function getUserByEmailAPI(email: string, signal?: AbortSignal): Pr
 
     try {
 
-        const rawResponse = await fetch(`${BASE_URL}/user/${email}`, {
+        const lowEmail = email.toLowerCase();
+
+        const rawResponse = await fetch(`${BASE_URL}/user/${lowEmail}`, {
             method: 'GET',
             headers: getFullHeader("without token"),
             signal
