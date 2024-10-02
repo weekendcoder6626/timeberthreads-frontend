@@ -98,18 +98,22 @@ export default function ProductList({ products, loading, error, mode = "feed", c
 
                         <Flex direction={{ base: "column", sm: "row" }}>
 
-                            <img
-                                onClick={() => clickHandler(product.productId)}
-                                src={product.smallImage || 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png'}
-                                height={"160px"}
-                                width={"160px"}
-                                style={{
-                                    objectFit: "contain",
-                                    borderRadius: 20,
-                                    cursor: "pointer"
-                                }}
-                                alt={product.productName || 'Norway'}
-                            />
+                            <Center>
+                            
+                                <img
+                                    onClick={() => clickHandler(product.productId)}
+                                    src={product.smallImage || 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png'}
+                                    height={"160px"}
+                                    width={"160px"}
+                                    style={{
+                                        objectFit: "contain",
+                                        borderRadius: 20,
+                                        cursor: "pointer"
+                                    }}
+                                    alt={product.productName || 'Norway'}
+                                />
+                            
+                            </Center>
 
                             <Stack gap={0} ml={{ base: 0, sm: 20 }} mt={{ base: 20, md: 0 }}>
 
